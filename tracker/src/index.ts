@@ -1,7 +1,7 @@
 /*
  * @Date         : 2021-01-29 14:19:29
  * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-12 23:17:21
+ * @LastEditTime : 2021-02-13 11:33:09
  * @Description  :
  */
 
@@ -68,12 +68,13 @@ export function TrackClassMethod<T>(params: TrackerParams | AspectFunction<any>,
   const originalValue = descriptor.value
 
   descriptor.value = function () {
-    const result = originalValue.apply(this, arguments)
+    const args = arguments
+    const result = originalValue.apply(this, args)
 
     const tracking = async (originalValueResult) => {
       /** 方法的话就把原函数的 入参和返回值 传进去 */
       if (isFunction(params)) {
-        const AspectFunctionResult = await params.apply(this, [arguments, originalValueResult])
+        const AspectFunctionResult = await params.apply(this, [args, originalValueResult])
         Tracker.send(AspectFunctionResult)
       } else {
         Tracker.send(params)

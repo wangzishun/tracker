@@ -8,6 +8,5 @@
     "@types/lodash-es": "^4.17.4",
     "lodash-es": "^4.17.20"
   },
-  "module": "index.ts",
-  "main": "index.ts"
+  "main": "dist/index.js"
 }
