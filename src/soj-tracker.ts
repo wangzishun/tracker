@@ -1,12 +1,12 @@
 /*
  * @Date         : 2021-01-28 13:43:09
  * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-02 15:43:35
+ * @LastEditTime : 2021-02-12 23:13:13
  * @Description  :
  */
 
 import { isUndefined, omit } from 'lodash-es'
-import { BaseTracker, SOJParamsEnum, SOJParamsEnumKeys, SOJParamsEnumKeysUnion, TrackerParamsUnion } from '../base'
+import { BaseTracker, SOJParamsEnum, SOJParamsEnumKeys, SOJParamsEnumKeysUnion, TrackerParamsUnion } from './base'
 
 type SOJTrackerProps = Record<string, any>
 

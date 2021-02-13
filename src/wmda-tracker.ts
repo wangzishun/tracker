@@ -1,12 +1,12 @@
 /*
  * @Date         : 2021-01-28 13:40:40
  * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-02 18:19:15
+ * @LastEditTime : 2021-02-12 22:28:12
  * @Description  :
  */
 
 import { isUndefined, omit } from 'lodash-es'
-import { BaseTracker, WMDAParamsEnum, TrackerParamsUnion, WMDAParamsEnumKeysUnion, WMDAParamsEnumKeys } from '../base'
+import { BaseTracker, WMDAParamsEnum, TrackerParamsUnion, WMDAParamsEnumKeysUnion, WMDAParamsEnumKeys } from './base'
 
 type WMDATrackerProps = Record<string, any>
 

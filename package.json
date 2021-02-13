@@ -1,0 +1,12 @@
+{
+  "name": "tracker",
+  "version": "1.0.0",
+  "repository": "git@github.com:wangzishun/tracker.git",
+  "author": "wangzishun <wangzishun@58.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/lodash-es": "^4.17.4",
+    "lodash-es": "^4.17.20"
+  },
+  "module": "index.ts"
+}
