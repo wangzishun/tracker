@@ -1,12 +1,5 @@
-/*
- * @Date         : 2021-01-29 14:19:29
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-13 11:33:09
- * @Description  :
- */
-
-import { isUndefined, isFunction, isString } from 'lodash-es'
 import { TrackerParamsUnion, patches } from './base'
+import { isUndefined, isFunction, isString } from './base'
 import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
 import { formTrackerForAntdVueV1 } from './form-tracker-for-vue2-antd'
@@ -53,6 +46,8 @@ export class Tracker {
 
   static form(form, framework, options: Record<string, string> | Function) {
     formTrackerForAntdVueV1(form, framework, console.log)
+    console.log(1);
+
   }
 
   constructor(options?: TrackerProps) {

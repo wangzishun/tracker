@@ -1,11 +1,5 @@
-/*
- * @Date         : 2021-01-28 13:47:37
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-02 15:40:56
- * @Description  :
- */
 
-import { isUndefined } from 'lodash-es'
+import { isUndefined } from './utils'
 import { TrackerParamsUnion } from './constant'
 
 /**

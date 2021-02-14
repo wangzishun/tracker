@@ -1,11 +1,6 @@
-/*
- * @Date         : 2021-02-01 14:24:22
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-02 18:19:06
- * @Description  :
- */
 
-import { isUndefined } from 'lodash-es'
+
+import { isUndefined } from './utils'
 import { TrackerParamsUnion } from './constant'
 
 // const sleep = () => new Promise((resolve) => setTimeout(resolve, Interval))

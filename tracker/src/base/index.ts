@@ -1,15 +1,12 @@
-/*
- * @Date         : 2021-01-29 14:18:58
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-01 17:43:34
- * @Description  :
- */
+
 
 export * from './base-tracker'
 
 export * from './constant'
 
-export * from './patch'
+export * from './patchs'
+
+export * from './utils'
 
 declare global {
   interface Window {

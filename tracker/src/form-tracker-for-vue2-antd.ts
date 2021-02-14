@@ -1,10 +1,4 @@
-/*
- * @Date         : 2021-02-03 17:42:38
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-03 18:26:40
- * @Description  :
- */
-import { isEmpty, isFunction, isUndefined } from 'lodash-es'
+import { isUndefined } from './base'
 
 type onValuesChange = (name: string, newValue, oldValue) => void
 
@@ -45,7 +39,7 @@ export const formTrackerForAntdVueV1 = (form: any, Vue: any, onValuesChange: onV
       addedFields.push(name)
     }
 
-    if (isEmpty(addedFields)) return
+    if (addedFields.length === 0) return
 
     addedFields.forEach((name) => {
       /**

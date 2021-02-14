@@ -1,9 +1,4 @@
-/*
- * @Date         : 2021-01-29 14:14:39
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-02 17:48:52
- * @Description  :
- */
+
 
 export const CommonParamsEnum = <const>{
   /** 这个值比较特殊, 如果用户输入的是字符串时, 则会转成对应工具的 key  */

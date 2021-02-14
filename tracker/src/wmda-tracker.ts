@@ -1,11 +1,5 @@
-/*
- * @Date         : 2021-01-28 13:40:40
- * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-12 22:28:12
- * @Description  :
- */
 
-import { isUndefined, omit } from 'lodash-es'
+import { isUndefined } from './base'
 import { BaseTracker, WMDAParamsEnum, TrackerParamsUnion, WMDAParamsEnumKeysUnion, WMDAParamsEnumKeys } from './base'
 
 type WMDATrackerProps = Record<string, any>
@@ -49,7 +43,7 @@ export class WMDATracker extends BaseTracker {
 
     const extendParameters = {
       /** 映射之外的参数一律当作扩展参数 */
-      ...omit(params, WMDAParamsEnumKeys),
+      ...params,
       ...this.cachedExtendParameters
     }
 
