@@ -4,6 +4,7 @@ import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
 import { formTrackerForAntdVueV1 } from './form-tracker-for-vue2-antd'
 
+export * from './form-tracker-for-vue2-antd'
 type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] & ConstructorParameters<typeof SOJTracker>[number]
 
 type AspectFunction<T extends (args?, result?) => any> = (args: Parameters<T>, result: ReturnType<T>) => TrackerParamsUnion
@@ -23,12 +24,10 @@ export class Tracker {
     const refactoredParams = isString(params) ? { key: params } : params
     const data = await patches(refactoredParams)
 
-    if (isUndefined(Tracker.WMDATracker) || isUndefined(Tracker.SOJTracker)) {
-      new Tracker()
-    }
+    new Tracker()
 
-    Tracker.WMDATracker.send(data)
-    Tracker.SOJTracker.send(data)
+    Tracker.WMDATracker && Tracker.WMDATracker.send(data)
+    Tracker.SOJTracker && Tracker.SOJTracker.send(data)
   }
 
   static track(params?: TrackerParams | AspectFunction<any>) {
@@ -44,15 +43,29 @@ export class Tracker {
     }
   }
 
-  static form(form, framework, options: Record<string, string> | Function) {
-    formTrackerForAntdVueV1(form, framework, console.log)
-    console.log(1);
-
+  static form(form, mapping?, before?) {
+    if (form._isVue === true) {
+      formTrackerForAntdVueV1(form, function (fieldsName, fieldsValue, oldVal) {
+        if (isFunction(before)) {
+          const params = before(fieldsName, fieldsValue, oldVal)
+          if (!isUndefined(params)) {
+            Tracker.send(params)
+            return
+          }
+        }
+        Tracker.send({ Key: '1', fieldsName, fieldsValue })
+      })
+    }
   }
 
   constructor(options?: TrackerProps) {
-    Tracker.WMDATracker = new WMDATracker(options)
-    Tracker.SOJTracker = new SOJTracker(options)
+    if (isUndefined(Tracker.WMDATracker)) {
+      Tracker.WMDATracker = new WMDATracker(options)
+    }
+
+    if (isUndefined(Tracker.SOJTracker)) {
+      Tracker.SOJTracker = new SOJTracker(options)
+    }
   }
 }
 

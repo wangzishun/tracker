@@ -12,7 +12,10 @@ export class SOJTracker extends BaseTracker {
     const SOJ = window.logger || window.loggerAction
     if (!isUndefined(SOJ)) {
       this.sender = (eventData) => SOJ.sendpv(eventData)
+      return this
     }
+
+    return undefined
   }
 
   /** 初始化过程缓存的扩展参数 */

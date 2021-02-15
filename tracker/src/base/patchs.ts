@@ -1,6 +1,6 @@
 
 
-import { isUndefined } from './utils'
+import { getToolsTrackingCertificate, isUndefined } from './utils'
 import { TrackerParamsUnion } from './constant'
 
 // const sleep = () => new Promise((resolve) => setTimeout(resolve, Interval))
@@ -39,11 +39,11 @@ class TimeSpan extends TimeSpanBase {
     await this.sleepDebouncing(Interval)
 
     this.span = new Date().getTime() - this.span
+
     if (this.span > Interval + 50) {
       return this.span
     }
   }
-
 
 }
 
@@ -51,7 +51,8 @@ class TimeSpan extends TimeSpanBase {
  * 时间间隔的补丁字段
  */
 const timeSpanPatch = async (params: TrackerParamsUnion) => {
-  const key = JSON.stringify(params)
+
+  const key = getToolsTrackingCertificate(params)
   let timeSpan = map.get(key)
 
   if (isUndefined(timeSpan)) {

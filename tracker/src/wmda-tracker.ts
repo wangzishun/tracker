@@ -16,7 +16,10 @@ export class WMDATracker extends BaseTracker {
     if (!isUndefined(window.WMDA_REPORT)) {
       // this.sender = (eventData) => window.WMDA_REPORT('custom', eventData)
       this.sender = (eventData) => window.WMDA_REPORT('custom', eventData)
+      return this
     }
+
+    return undefined
   }
 
   /** 扩展参数 */

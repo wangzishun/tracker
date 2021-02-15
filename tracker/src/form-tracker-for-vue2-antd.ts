@@ -1,6 +1,4 @@
-import { isUndefined } from './base'
-
-type onValuesChange = (name: string, newValue, oldValue) => void
+import { isFunction } from './base'
 
 /** 表单字段在 form 对象中的路径, 我们需要依赖这个路径进行 watch */
 const WATCH_PATH = 'fieldsStore.fields'
@@ -12,9 +10,11 @@ const WATCH_PATH = 'fieldsStore.fields'
  * @param Vue 需要创建 Vue 实例
  * @param onValuesChange 字段变更时执行的回调
  */
-export const formTrackerForAntdVueV1 = (form: any, Vue: any, onValuesChange: onValuesChange) => {
+export const formTrackerForAntdVueV1 = (formContext, onValuesChange) => {
   /** 保存一下引用, 否则无法监听里面的fields字段 */
-  const fieldsStore = form.fieldsStore
+  const fieldsStore = formContext.fieldsStore
+  const Vue = formContext.$options._base
+
   const formWatcher = new Vue({
     data() {
       return {
@@ -45,20 +45,16 @@ export const formTrackerForAntdVueV1 = (form: any, Vue: any, onValuesChange: onV
       /**
        * 监听目标表单字段值 fieldsStore.fields.XXXXXXXXX.value
        */
-      const path = [WATCH_PATH, name, 'value'].join('.')
+      // const path = [WATCH_PATH, name, 'value'].join('.')
       const unwatch = formWatcher.$watch(
-        path,
-        function (newVal, oldVal) {
-          if (isUndefined(onValuesChange)) {
-            return
-          }
-          onValuesChange(name, newVal, oldVal)
+        function () {
+          return this.fieldsStore.fields[name]['value']
         },
+        (newVal, oldVal) => onValuesChange(name, newVal, oldVal),
         { immediate: true }
       )
       this.unwatchMap.set(name, unwatch)
     })
   })
-  formWatcher
   return formWatcher
 }

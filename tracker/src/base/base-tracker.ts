@@ -1,4 +1,3 @@
-
 import { isUndefined } from './utils'
 import { TrackerParamsUnion } from './constant'
 

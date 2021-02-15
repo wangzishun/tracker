@@ -8,8 +8,8 @@
     "dev": "rollup -c rollup.config.ts -w",
     "build": "rollup -c rollup.config.ts"
   },
-  "main": "dist/tracker.es.js",
-  "module": "dist/tracker.es.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",
