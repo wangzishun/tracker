@@ -2,14 +2,15 @@ import { TrackerParamsUnion, patches } from './base'
 import { isUndefined, isFunction, isString } from './base'
 import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
-import { formTrackerForAntdVueV1 } from './form-tracker-for-vue2-antd'
+import { trackerForAntdvForm } from './tracker-for-antdv-form'
+import { trackerForVueData } from './tracker-for-vue-data'
 
-export * from './form-tracker-for-vue2-antd'
+export * from './tracker-for-antdv-form'
 type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] & ConstructorParameters<typeof SOJTracker>[number]
 
-type AspectFunction<T extends (args?, result?) => any> = (args: Parameters<T>, result: ReturnType<T>) => TrackerParamsUnion
+export type AspectFunction<T extends (args?, result?) => any> = (args: Parameters<T>, result: ReturnType<T>) => TrackerParamsUnion
 
-type TrackerParams = string | TrackerParamsUnion
+export type TrackerParams = string | TrackerParamsUnion
 export class Tracker {
   private static WMDATracker: WMDATracker
   private static SOJTracker: SOJTracker
@@ -43,28 +44,29 @@ export class Tracker {
     }
   }
 
-  static form(form, mapping?, before?) {
-    if (form._isVue === true) {
-      formTrackerForAntdVueV1(form, function (fieldsName, fieldsValue, oldVal) {
-        if (isFunction(before)) {
-          const params = before(fieldsName, fieldsValue, oldVal)
-          if (!isUndefined(params)) {
-            Tracker.send(params)
-            return
-          }
-        }
-        Tracker.send({ Key: '1', fieldsName, fieldsValue })
-      })
+  static form(context, options?: TrackOptions) {
+    try {
+      trackForm(context, options)
+    } catch (error) {
+      console.log(error)
     }
   }
 
-  constructor(options?: TrackerProps) {
+  // static data(context, options?: TrackOptions) {
+  //   try {
+  //     trackData(context, options)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  constructor(trackerProps?: TrackerProps) {
     if (isUndefined(Tracker.WMDATracker)) {
-      Tracker.WMDATracker = new WMDATracker(options)
+      Tracker.WMDATracker = new WMDATracker(trackerProps)
     }
 
     if (isUndefined(Tracker.SOJTracker)) {
-      Tracker.SOJTracker = new SOJTracker(options)
+      Tracker.SOJTracker = new SOJTracker(trackerProps)
     }
   }
 }
@@ -110,3 +112,35 @@ export function TrackClass(params: any, target) {
   //   }
   // }
 }
+
+function getChangeHandler(fieldsMapping: Record<string, string | number>, onValuesChange: (name, value, old) => TrackerParamsUnion) {
+  return (fieldsName, fieldsValue, oldVal) => {
+    const params = isFunction(onValuesChange) ? onValuesChange(fieldsName, fieldsValue, oldVal) : {}
+    const Key = fieldsMapping[fieldsName]
+
+    Tracker.send({ Key, fieldsName, fieldsValue, ...params })
+  }
+}
+
+interface TrackOptions {
+  onValuesChange?: (name, value, old) => TrackerParamsUnion
+  fieldsMapping?: Record<string, string | number>
+}
+export function trackForm(context, options: TrackOptions = {}) {
+  const { fieldsMapping, onValuesChange } = options
+
+  if (trackerForAntdvForm.isAntdvForm(context)) {
+    const handleChange = getChangeHandler(fieldsMapping, onValuesChange)
+    trackerForAntdvForm(context, handleChange)
+  }
+}
+
+// export function trackData(context, options: TrackOptions = {}) {
+//   const { fieldsMapping, onValuesChange } = options
+//   const data = isString(options.data) ? [options.data] : options.data
+
+//   if (trackerForVueData.isVueData(context, data)) {
+//     const handleChange = getChangeHandler(fieldsMapping, onValuesChange)
+//     trackerForVueData(context, data, handleChange)
+//   }
+// }

@@ -2,12 +2,12 @@
  * @Author       : wangzishun
  * @Date         : 2021-02-13 11:06:15
  * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-15 21:28:44
+ * @LastEditTime : 2021-02-16 15:00:50
  * @Description  :
  */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Tracker, formTrackerForAntdVueV1 } from 'tracker'
-import { Form, Input } from 'ant-design-vue'
+import { Tracker } from 'tracker'
+import { Form, Input, FormModel } from 'ant-design-vue'
 import Hello from './hello.vue'
 @Component
 export class TrackerTest extends Vue {
@@ -16,7 +16,14 @@ export class TrackerTest extends Vue {
     this.form = this.$form.createForm(this, {})
 
     // formTrackerForAntdVueV1(this.form)
-    Tracker.form(this.form)
+    const mapping = { note222: 11111 }
+    Tracker.form(this.form, {
+      onValuesChange(name) {
+        return { }
+      },
+      fieldsMapping: mapping
+    })
+    // Tracker.form(this.form, () => ({}), {})
     console.log(this.form)
   }
 
@@ -52,16 +59,25 @@ export class TrackerTest extends Vue {
   }
 }
 
-const TestDefaultVue = {
-  data() {
-    return {
-      name: 'wangzi'
-    }
-  },
-  created() {
-    console.log(this)
-  },
-  render() {
-    return <div>{this.name}</div>
-  }
-}
+// const TestDefaultVue = {
+//   data() {
+//     return {
+//       name: 'wangzi',
+//       form: { name: 1 }
+//     }
+//   },
+//   created() {
+//     console.log(this)
+//   },
+//   render() {
+//     return (
+//       <FormModel model={this.form}>
+//         {this.name}
+//         <FormModel.Item >
+//           {/* <Input v-model={this.form.name} onClick onChange={console.log}></Input> */}
+//           <input type="text" v-model={this.form.name}/>
+//         </FormModel.Item>
+//       </FormModel>
+//     )
+//   }
+// }
