@@ -11,6 +11,7 @@ type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] & Construc
 export type AspectFunction<T extends (args?, result?) => any> = (args: Parameters<T>, result: ReturnType<T>) => TrackerParamsUnion
 
 export type TrackerParams = string | TrackerParamsUnion
+
 export class Tracker {
   private static WMDATracker: WMDATracker
   private static SOJTracker: SOJTracker
@@ -20,7 +21,7 @@ export class Tracker {
    * @WMDA { id: event_id 事件id }
    * @SOJ { action: action }
    */
-  static async send(params: TrackerParams, ...options) {
+  static async send(params: TrackerParams = {}) {
     /** 这里把参数变成对象 */
     const refactoredParams = isString(params) ? { key: params } : params
     const data = await patches(refactoredParams)
@@ -144,3 +145,5 @@ export function trackForm(context, options: TrackOptions = {}) {
 //     trackerForVueData(context, data, handleChange)
 //   }
 // }
+export default Tracker
+window.Tracker = Tracker

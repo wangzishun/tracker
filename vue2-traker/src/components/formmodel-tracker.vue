@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Tracker } from 'tracker'
+// import { Tracker } from 'tracker'
 
 export default {
   data() {
@@ -67,7 +67,7 @@ export default {
     }
   },
   created() {
-    Tracker.data(this, { data: ['dynamicValidateForm'] })
+    // Tracker.data(this, { data: ['dynamicValidateForm'] })
   },
   methods: {
     submitForm(formName) {

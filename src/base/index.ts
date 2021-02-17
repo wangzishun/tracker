@@ -1,4 +1,4 @@
-
+import Tracker from '../index'
 
 export * from './base-tracker'
 
@@ -14,5 +14,6 @@ declare global {
     loggerAction?: any
     WMDA_SDK_CONFIG?: any
     WMDA_REPORT?: any
+    Tracker?: Tracker
   }
 }
