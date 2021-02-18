@@ -2,11 +2,10 @@
  * @Author       : wangzishun
  * @Date         : 2021-02-13 11:06:15
  * @LastEditors  : wangzishun
- * @LastEditTime : 2021-02-16 15:00:50
+ * @LastEditTime : 2021-02-18 11:23:48
  * @Description  :
  */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Tracker } from 'tracker'
 import { Form, Input, FormModel } from 'ant-design-vue'
 import Hello from './hello.vue'
 @Component

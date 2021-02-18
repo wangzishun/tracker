@@ -9,8 +9,7 @@ export default {
   input: `src/index.ts`,
   output: [
     { file: pkg.main, name: pkg.name, format: 'umd' },
-    { file: pkg.module, format: 'esm' },
-    { file: pkg.module, format: 'esm' },
+    { file: pkg.module, format: 'esm' }
   ],
   external: [],
   watch: {

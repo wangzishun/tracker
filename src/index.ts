@@ -10,16 +10,15 @@ import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
 import { trackerForAntdvForm } from './tracker-for-antdv-form'
 
-export * from './tracker-for-antdv-form'
 type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] &
   ConstructorParameters<typeof SOJTracker>[number]
 
-export type AspectFunction<T extends (args?, result?) => any> = (
+type AspectFunction<T extends (args?, result?) => any> = (
   args: Parameters<T>,
   result: ReturnType<T>,
 ) => TrackerParamsUnion
 
-export type TrackerParams = string | TrackerParamsUnion
+type TrackerParams = string | TrackerParamsUnion
 
 export class Tracker {
   private static WMDATracker: WMDATracker
@@ -27,10 +26,11 @@ export class Tracker {
   private static SOJTracker: SOJTracker
 
   /**
-   * @param params
-   * @WMDA { id: event_id 事件id }
-   * @SOJ { action: action }
+   * @param params 发码参数
+   * WMDA { id: event_id 事件id }
+   * SOJ { action: action }
    */
+
   static async send(params: TrackerParams = {}) {
     /** 这里把参数变成对象 */
     const refactoredParams = isString(params) ? { key: params } : params
@@ -81,7 +81,7 @@ export class Tracker {
 /**
  * 返回一个目标"类方法"的 descriptor
  */
-export function TrackClassMethod(
+function TrackClassMethod(
   params: TrackerParams | AspectFunction<any>,
   descriptor: PropertyDescriptor,
 ) {
@@ -111,7 +111,7 @@ export function TrackClassMethod(
   return descriptor
 }
 
-export function TrackClass(params: any) {
+function TrackClass(params: any) {
   console.log(params)
 
   // return function <T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -127,15 +127,15 @@ export function TrackClass(params: any) {
 
 function getChangeHandler(
   fieldsMapping: Record<string, string | number>,
-  onValuesChange?: (name, value, old) => TrackerParamsUnion,
+  onValuesChange?: (name, action, event) => TrackerParamsUnion,
 ) {
-  return (fieldsName, fieldsValue, oldVal) => {
+  return (name, action, event) => {
     const params = isFunction(onValuesChange)
-      ? onValuesChange(fieldsName, fieldsValue, oldVal)
+      ? onValuesChange(name, action, event)
       : {}
-    const Key = fieldsMapping[fieldsName]
+    const Key = fieldsMapping[name]
 
-    Tracker.send({ Key, fieldsName, fieldsValue, ...params })
+    Tracker.send({ Key, name, ...params })
   }
 }
 
@@ -143,7 +143,7 @@ interface TrackOptions {
   onValuesChange?: (name, value, old) => TrackerParamsUnion
   fieldsMapping?: Record<string, string | number>
 }
-export function trackForm(context, options: TrackOptions = {}) {
+function trackForm(context, options: TrackOptions = {}) {
   const { fieldsMapping = {}, onValuesChange } = options
 
   if (trackerForAntdvForm.isAntdvForm(context)) {
@@ -152,7 +152,7 @@ export function trackForm(context, options: TrackOptions = {}) {
   }
 }
 
-// export function trackData(context, options: TrackOptions = {}) {
+// function trackData(context, options: TrackOptions = {}) {
 //   const { fieldsMapping, onValuesChange } = options
 //   const data = isString(options.data) ? [options.data] : options.data
 
