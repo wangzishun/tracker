@@ -1,6 +1,11 @@
-
-import { isUndefined } from './base'
-import { BaseTracker, WMDAParamsEnum, TrackerParamsUnion, WMDAParamsEnumKeysUnion, WMDAParamsEnumKeys } from './base'
+import {
+  isUndefined,
+  BaseTracker,
+  WMDAParamsEnum,
+  TrackerParamsUnion,
+  WMDAParamsEnumKeysUnion,
+  WMDAParamsEnumKeys,
+} from './base'
 
 type WMDATrackerProps = Record<string, any>
 
@@ -15,11 +20,8 @@ export class WMDATracker extends BaseTracker {
     this.cachedExtendParameters = options
     if (!isUndefined(window.WMDA_REPORT)) {
       // this.sender = (eventData) => window.WMDA_REPORT('custom', eventData)
-      this.sender = (eventData) => window.WMDA_REPORT('custom', eventData)
-      return this
+      this.sender = eventData => window.WMDA_REPORT('custom', eventData)
     }
-
-    return undefined
   }
 
   /** 扩展参数 */
@@ -47,9 +49,9 @@ export class WMDATracker extends BaseTracker {
     const extendParameters = {
       /** 映射之外的参数一律当作扩展参数 */
       ...params,
-      ...this.cachedExtendParameters
+      ...this.cachedExtendParameters,
     }
 
-    return Object.assign({}, WMDAEventData, extendParameters)
+    return { ...WMDAEventData, ...extendParameters }
   }
 }

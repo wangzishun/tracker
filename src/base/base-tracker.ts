@@ -1,6 +1,7 @@
 import { isUndefined } from './utils'
 import { TrackerParamsUnion } from './constant'
 
+type STATUS = 'PREPARE' | 'READY'
 /**
  * Tracker
  * @see 需要子类自行实现 [ sernder, serializeData ]
@@ -13,8 +14,8 @@ export abstract class BaseTracker {
    */
   send(params: TrackerParamsUnion) {
     if (isUndefined(this.sender)) {
-      this.sender = console.log
-      // return
+      // this.sender = console.log
+      return
     }
 
     if (isUndefined(this.serializeData)) {
@@ -24,6 +25,25 @@ export abstract class BaseTracker {
     const serializeData = this.serializeData(params)
 
     this.sender(serializeData)
+  }
+
+  STATUS: STATUS = 'PREPARE'
+
+  isReady() {
+    if (this.STATUS === "READY") {
+      return true
+    }
+
+    if (isUndefined(this.sender)) {
+      return false
+    }
+
+    this.STATUS = 'READY'
+    return true
+  }
+
+  isPrepare() {
+    return !this.isReady()
   }
 
   abstract sender

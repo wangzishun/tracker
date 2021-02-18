@@ -1,5 +1,3 @@
-
-
 import { getToolsTrackingCertificate, isUndefined } from './utils'
 import { TrackerParamsUnion } from './constant'
 
@@ -12,7 +10,7 @@ class TimeSpanBase {
 
   sleepDebouncing(interval) {
     this.clearTimeout()
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.timer = setTimeout(() => {
         resolve(this.timer)
         this.clearTimeout()
@@ -44,14 +42,12 @@ class TimeSpan extends TimeSpanBase {
       return this.span
     }
   }
-
 }
 
 /**
  * 时间间隔的补丁字段
  */
 const timeSpanPatch = async (params: TrackerParamsUnion) => {
-
   const key = getToolsTrackingCertificate(params)
   let timeSpan = map.get(key)
 
@@ -67,7 +63,6 @@ const timeSpanPatch = async (params: TrackerParamsUnion) => {
     return { timeSpan: span }
   }
 }
-
 
 export async function patches(params, options?) {
   try {

@@ -1,4 +1,4 @@
-import { isUndefined } from "./base"
+import { isUndefined } from './base'
 
 /** 表单字段在 form 对象中的路径, 我们需要依赖这个路径进行 watch */
 const WATCH_PATH = 'fieldsStore.fields'
@@ -11,24 +11,24 @@ const WATCH_PATH = 'fieldsStore.fields'
  */
 export const trackerForAntdvForm = (formContext, onValuesChange) => {
   /** 保存一下引用, 否则无法监听里面的fields字段 */
-  const fieldsStore = formContext.fieldsStore
+  const { fieldsStore } = formContext
   const Vue = formContext.$options._base
 
   const formWatcher = new Vue({
     data() {
       return {
         fieldsStore,
-        unwatchMap: new Map<string, Function>()
+        unwatchMap: new Map<string, Function>(),
       }
     },
     /** 组件卸载后解除 watch */
     beforeDestroy() {
-      this.unwatchMap.forEach((unwatch) => unwatch())
-    }
+      this.unwatchMap.forEach(unwatch => unwatch())
+    },
   })
 
   formWatcher.$watch(WATCH_PATH, function (newestFields) {
-    const addedFields = []
+    const addedFields: string[] = []
 
     for (const name in newestFields) {
       if (!Object.prototype.hasOwnProperty.call(newestFields, name)) continue
@@ -40,17 +40,17 @@ export const trackerForAntdvForm = (formContext, onValuesChange) => {
 
     if (addedFields.length === 0) return
 
-    addedFields.forEach((name) => {
+    addedFields.forEach(name => {
       /**
        * 监听目标表单字段值 fieldsStore.fields.XXXXXXXXX.value
        */
       // const path = [WATCH_PATH, name, 'value'].join('.')
       const unwatch = formWatcher.$watch(
         function () {
-          return this.fieldsStore.fields[name]['value']
+          return this.fieldsStore.fields[name].value
         },
         (newVal, oldVal) => onValuesChange(name, newVal, oldVal),
-        { immediate: true }
+        { immediate: true },
       )
       this.unwatchMap.set(name, unwatch)
     })
@@ -59,5 +59,9 @@ export const trackerForAntdvForm = (formContext, onValuesChange) => {
 }
 
 trackerForAntdvForm.isAntdvForm = function (form) {
-  return form._isVue === true && !isUndefined(form.fieldsStore) && !isUndefined(form.formItems)
+  return (
+    form._isVue === true &&
+    !isUndefined(form.fieldsStore) &&
+    !isUndefined(form.formItems)
+  )
 }

@@ -1,6 +1,11 @@
-
-import { isUndefined } from './base'
-import { BaseTracker, SOJParamsEnum, SOJParamsEnumKeys, SOJParamsEnumKeysUnion, TrackerParamsUnion } from './base'
+import {
+  isUndefined,
+  BaseTracker,
+  SOJParamsEnum,
+  SOJParamsEnumKeys,
+  SOJParamsEnumKeysUnion,
+  TrackerParamsUnion,
+} from './base'
 
 type SOJTrackerProps = Record<string, any>
 
@@ -11,11 +16,8 @@ export class SOJTracker extends BaseTracker {
     this.cachedExtendParameters = options
     const SOJ = window.logger || window.loggerAction
     if (!isUndefined(SOJ)) {
-      this.sender = (eventData) => SOJ.sendpv(eventData)
-      return this
+      this.sender = eventData => SOJ.sendpv(eventData)
     }
-
-    return undefined
   }
 
   /** 初始化过程缓存的扩展参数 */

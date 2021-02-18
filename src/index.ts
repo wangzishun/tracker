@@ -1,19 +1,29 @@
-import { TrackerParamsUnion, patches } from './base'
-import { isUndefined, isFunction, isString } from './base'
+import {
+  TrackerParamsUnion,
+  patches,
+  isUndefined,
+  isFunction,
+  isString,
+} from './base'
+
 import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
 import { trackerForAntdvForm } from './tracker-for-antdv-form'
-import { trackerForVueData } from './tracker-for-vue-data'
 
 export * from './tracker-for-antdv-form'
-type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] & ConstructorParameters<typeof SOJTracker>[number]
+type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] &
+  ConstructorParameters<typeof SOJTracker>[number]
 
-export type AspectFunction<T extends (args?, result?) => any> = (args: Parameters<T>, result: ReturnType<T>) => TrackerParamsUnion
+export type AspectFunction<T extends (args?, result?) => any> = (
+  args: Parameters<T>,
+  result: ReturnType<T>,
+) => TrackerParamsUnion
 
 export type TrackerParams = string | TrackerParamsUnion
 
 export class Tracker {
   private static WMDATracker: WMDATracker
+
   private static SOJTracker: SOJTracker
 
   /**
@@ -32,13 +42,17 @@ export class Tracker {
     Tracker.SOJTracker && Tracker.SOJTracker.send(data)
   }
 
-  static track(params?: TrackerParams | AspectFunction<any>) {
-    return function (target, propertyKey?: string, descriptor?: PropertyDescriptor) {
+  static track(params: TrackerParams | AspectFunction<any>) {
+    return function (
+      target,
+      propertyKey: string,
+      descriptor: PropertyDescriptor,
+    ) {
       /** 是构造函数, 装饰在类上 */
       // target === target.prototype.constructor &&
 
       if (isUndefined(propertyKey) && isUndefined(descriptor)) {
-        return TrackClass(params, target)
+        return TrackClass(params)
       }
 
       return TrackClassMethod(params, descriptor)
@@ -49,24 +63,16 @@ export class Tracker {
     try {
       trackForm(context, options)
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
 
-  // static data(context, options?: TrackOptions) {
-  //   try {
-  //     trackData(context, options)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
   constructor(trackerProps?: TrackerProps) {
-    if (isUndefined(Tracker.WMDATracker)) {
+    if (isUndefined(Tracker.WMDATracker) || Tracker.WMDATracker.isPrepare()) {
       Tracker.WMDATracker = new WMDATracker(trackerProps)
     }
 
-    if (isUndefined(Tracker.SOJTracker)) {
+    if (isUndefined(Tracker.SOJTracker) || Tracker.SOJTracker.isPrepare()) {
       Tracker.SOJTracker = new SOJTracker(trackerProps)
     }
   }
@@ -75,17 +81,22 @@ export class Tracker {
 /**
  * 返回一个目标"类方法"的 descriptor
  */
-export function TrackClassMethod<T>(params: TrackerParams | AspectFunction<any>, descriptor: PropertyDescriptor) {
+export function TrackClassMethod(
+  params: TrackerParams | AspectFunction<any>,
+  descriptor: PropertyDescriptor,
+) {
   const originalValue = descriptor.value
 
-  descriptor.value = function () {
-    const args = arguments
+  descriptor.value = function (...args) {
     const result = originalValue.apply(this, args)
 
-    const tracking = async (originalValueResult) => {
+    const tracking = async originalValueResult => {
       /** 方法的话就把原函数的 入参和返回值 传进去 */
       if (isFunction(params)) {
-        const AspectFunctionResult = await params.apply(this, [args, originalValueResult])
+        const AspectFunctionResult = await params.apply(this, [
+          args,
+          originalValueResult,
+        ])
         Tracker.send(AspectFunctionResult)
       } else {
         Tracker.send(params)
@@ -100,7 +111,7 @@ export function TrackClassMethod<T>(params: TrackerParams | AspectFunction<any>,
   return descriptor
 }
 
-export function TrackClass(params: any, target) {
+export function TrackClass(params: any) {
   console.log(params)
 
   // return function <T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -114,9 +125,14 @@ export function TrackClass(params: any, target) {
   // }
 }
 
-function getChangeHandler(fieldsMapping: Record<string, string | number>, onValuesChange: (name, value, old) => TrackerParamsUnion) {
+function getChangeHandler(
+  fieldsMapping: Record<string, string | number>,
+  onValuesChange?: (name, value, old) => TrackerParamsUnion,
+) {
   return (fieldsName, fieldsValue, oldVal) => {
-    const params = isFunction(onValuesChange) ? onValuesChange(fieldsName, fieldsValue, oldVal) : {}
+    const params = isFunction(onValuesChange)
+      ? onValuesChange(fieldsName, fieldsValue, oldVal)
+      : {}
     const Key = fieldsMapping[fieldsName]
 
     Tracker.send({ Key, fieldsName, fieldsValue, ...params })
@@ -128,7 +144,7 @@ interface TrackOptions {
   fieldsMapping?: Record<string, string | number>
 }
 export function trackForm(context, options: TrackOptions = {}) {
-  const { fieldsMapping, onValuesChange } = options
+  const { fieldsMapping = {}, onValuesChange } = options
 
   if (trackerForAntdvForm.isAntdvForm(context)) {
     const handleChange = getChangeHandler(fieldsMapping, onValuesChange)
@@ -147,3 +163,13 @@ export function trackForm(context, options: TrackOptions = {}) {
 // }
 export default Tracker
 window.Tracker = Tracker
+
+declare global {
+  interface Window {
+    logger?: any
+    loggerAction?: any
+    WMDA_SDK_CONFIG?: any
+    WMDA_REPORT?: any
+    Tracker?: Tracker
+  }
+}
