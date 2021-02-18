@@ -1,7 +1,7 @@
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
-import typescript from 'rollup-plugin-typescript2'
-import json from 'rollup-plugin-json'
+import commonjs from '@rollup/plugin-commonjs'
+import nodeResolve from '@rollup/plugin-node-resolve'
+import typescript from '@rollup/plugin-typescript'
+import json from '@rollup/plugin-json'
 
 import pkg from './package.json'
 
@@ -18,12 +18,11 @@ export default {
   plugins: [
     // Allow node_modules resolution, so you can use 'external' to control
     // which external modules to include in the bundle
-    // https://github.com/rollup/rollup-plugin-node-resolve#usage
-    resolve(),
+    nodeResolve(),
     // Allow json resolution
     json(),
     // Compile TypeScript files
-    typescript({ useTsconfigDeclarationDir: true }),
+    typescript(),
     // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
     commonjs({
       include: 'node_modules/**'
