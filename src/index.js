@@ -4,7 +4,6 @@ export class Name {
 
   }
 
-  set = new Set()
   send() {
     return new Promise((resolve)=>{
       setTimeout(() => {
@@ -13,3 +12,7 @@ export class Name {
     })
   }
 }
+
+const set = new Set()
+
+console.log(set);
