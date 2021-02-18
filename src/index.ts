@@ -104,7 +104,7 @@ function TrackClassMethod(
     }
 
     /** 结果有可能是异步, 异步的时候注册到回调函数上 */
-    result instanceof Promise ? result.then(tracking) : tracking(result)
+    result.then ? result.then(tracking) : tracking(result)
 
     return result
   }
