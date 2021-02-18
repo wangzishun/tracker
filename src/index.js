@@ -15,4 +15,10 @@ export class Name {
 
 const set = new Set()
 
+
+async function name(params) {
+  console.log(111);
+
+}
+console.log(name);
 console.log(set);

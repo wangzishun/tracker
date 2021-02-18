@@ -2,7 +2,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
-import babel, { getBabelOutputPlugin } from '@rollup/plugin-babel'
+import { getBabelOutputPlugin } from '@rollup/plugin-babel'
 import { DEFAULT_EXTENSIONS } from '@babel/core'
 
 import pkg from './package.json'
@@ -29,10 +29,7 @@ export default {
     include: 'src/**'
   },
   plugins: [
-    // Allow json resolution
     json(),
-    // Compile TypeScript files
-    typescript(),
     // babel({
     //   babelHelpers: 'runtime',
     //   // 只转换源代码，不运行外部依赖
@@ -41,26 +38,17 @@ export default {
     //   extensions: [...DEFAULT_EXTENSIONS, '.ts'],
     //   plugins: [['@babel/transform-runtime', { regenerator: true }]]
     // }),
-    // Allow node_modules resolution, so you can use 'external' to control
-    // which external modules to include in the bundle
     nodeResolve(),
-
-    // getBabelOutputPlugin({
-    //   allowAllFormats: true,
-    //   // babelHelpers: 'runtime',
-    //   // helpers: ''
-    //   exclude: 'node_modules/**',
-    //   // babel 默认不支持 ts 需要手动添加
-    //   extensions: [...DEFAULT_EXTENSIONS, '.ts'],
-    //   plugins: [['@babel/plugin-transform-runtime', { regenerator: true }]]
-    // }),
-    babel({
-      exclude: 'node_modules/**', // only transpile our source code,
-      babelHelpers: 'runtime'
-    }),
-    // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
     commonjs({
       include: 'node_modules/**'
-    })
+    }),
+    getBabelOutputPlugin({
+      allowAllFormats: true,
+      exclude: 'node_modules/**',
+      presets: ['@babel/env'],
+      extensions: [...DEFAULT_EXTENSIONS, '.ts'],
+      plugins: [['@babel/plugin-transform-runtime', { regenerator: true, corejs: 3 }]]
+    }),
+    typescript()
   ]
 }

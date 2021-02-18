@@ -13,3 +13,10 @@ export class Name {
     })
   }
 }
+
+async function name(params) {
+  console.log(111);
+
+}
+
+
