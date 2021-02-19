@@ -1,31 +1,35 @@
-import commonjs from '@rollup/plugin-commonjs'
+import { babel } from '@rollup/plugin-babel'
 import nodeResolve from '@rollup/plugin-node-resolve'
-import typescript from '@rollup/plugin-typescript'
-import json from '@rollup/plugin-json'
+import commonjs from '@rollup/plugin-commonjs'
+import { DEFAULT_EXTENSIONS } from '@babel/core'
 
 import pkg from './package.json'
 
+const external = [...Object.keys(pkg.dependencies || {})]
+const makeExternalPredicate = (externalArr) => {
+  if (externalArr.length === 0) {
+    return () => false
+  }
+  const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`)
+  return (id) => pattern.test(id)
+}
 export default {
-  input: `src/index.ts`,
+  input: 'src/index.ts',
+
   output: [
-    { file: pkg.main, name: pkg.name, format: 'umd' },
+    { file: pkg.main, name: pkg.name, format: 'cjs' },
     { file: pkg.module, format: 'esm' }
   ],
-  external: [],
-  watch: {
-    include: 'src/**'
-  },
+  external: makeExternalPredicate(external),
   plugins: [
-    // Allow node_modules resolution, so you can use 'external' to control
-    // which external modules to include in the bundle
     nodeResolve(),
-    // Allow json resolution
-    json(),
-    // Compile TypeScript files
-    typescript(),
-    // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
-    commonjs({
-      include: 'node_modules/**'
-    })
+    commonjs(),
+    babel({
+      exclude: 'node_modules/**',
+      babelHelpers: 'runtime',
+      presets: ['@babel/preset-env', '@babel/preset-typescript'],
+      extensions: [...DEFAULT_EXTENSIONS, '.ts'],
+      plugins: [['@babel/plugin-transform-runtime', { regenerator: true, corejs: 3 }]]
+    }),
   ]
 }
