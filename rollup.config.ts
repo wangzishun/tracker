@@ -1,5 +1,5 @@
 import { babel } from '@rollup/plugin-babel'
-import nodeResolve from '@rollup/plugin-node-resolve'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { DEFAULT_EXTENSIONS } from '@babel/core'
 
@@ -22,14 +22,18 @@ export default {
   ],
   external: makeExternalPredicate(external),
   plugins: [
-    nodeResolve(),
+    nodeResolve({ extensions: ['.mjs', '.js', '.jsx', '.json', '.ts'] }),
     commonjs(),
     babel({
       exclude: 'node_modules/**',
       babelHelpers: 'runtime',
-      presets: ['@babel/preset-env', '@babel/preset-typescript'],
+      presets: ['@babel/preset-typescript', '@babel/preset-env'],
       extensions: [...DEFAULT_EXTENSIONS, '.ts'],
-      plugins: [['@babel/plugin-transform-runtime', { regenerator: true, corejs: 3 }]]
-    }),
+      plugins: [
+        ['@babel/plugin-transform-runtime', { regenerator: true, corejs: 3 }],
+        '@babel/proposal-class-properties',
+        '@babel/proposal-object-rest-spread'
+      ]
+    })
   ]
 }

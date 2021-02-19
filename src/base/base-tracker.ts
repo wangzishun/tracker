@@ -30,7 +30,7 @@ export abstract class BaseTracker {
   STATUS: STATUS = 'PREPARE'
 
   isReady() {
-    if (this.STATUS === "READY") {
+    if (this.STATUS === 'READY') {
       return true
     }
 

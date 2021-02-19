@@ -14,7 +14,7 @@ const BaseTag = <const>{
   gen: '[object GeneratorFunction]',
   proxy: '[object Proxy]',
   null: '[object Null]',
-  undefined: '[object Undefined]',
+  undefined: '[object Undefined]'
 }
 
 export function isFunction(value): value is Function {
@@ -28,9 +28,7 @@ export function isFunction(value): value is Function {
  * 依据 key 从参数中取出可以标记一个埋点的对应字段, 返回 JSON.stringify()
  */
 export function getToolsTrackingCertificate(params: TrackerParamsUnion) {
-  const toolsTrackingCertificate = Object.values(
-    ToolsTrackingUniqueKeys,
-  ).reduce((previouse: any, uniqueKeys) => {
+  const toolsTrackingCertificate = Object.values(ToolsTrackingUniqueKeys).reduce((previouse: any, uniqueKeys) => {
     previouse[uniqueKeys] = params[uniqueKeys]
 
     return previouse

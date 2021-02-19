@@ -20,13 +20,8 @@ export const trackerForAntdvForm = (formContext, onValuesChange) => {
       return cachedOnCollectCommon(name, action, args)
     }
   }
-
 }
 
 trackerForAntdvForm.isAntdvForm = function (form) {
-  return (
-    form._isVue === true &&
-    !isUndefined(form.fieldsStore) &&
-    !isUndefined(form.formItems)
-  )
+  return form._isVue === true && !isUndefined(form.fieldsStore) && !isUndefined(form.formItems)
 }

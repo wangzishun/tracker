@@ -10,7 +10,7 @@ class TimeSpanBase {
 
   sleepDebouncing(interval) {
     this.clearTimeout()
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.timer = setTimeout(() => {
         resolve(this.timer)
         this.clearTimeout()

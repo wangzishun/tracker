@@ -4,11 +4,7 @@
  * @param form
  * @param onValuesChange 字段变更时执行的回调
  */
-export const trackerForVueData = (
-  context,
-  properties: string[],
-  onValuesChange,
-) => {
+export const trackerForVueData = (context, properties: string[], onValuesChange) => {
   /** 保存一下引用, 否则无法监听里面的fields字段 */
   console.log(context)
 
@@ -25,13 +21,13 @@ export const trackerForVueData = (
     data() {
       return {
         data,
-        unwatchMap: new Map<string, Function>(),
+        unwatchMap: new Map<string, Function>()
       }
     },
     /** 组件卸载后解除 watch */
     beforeDestroy() {
-      this.unwatchMap.forEach(unwatch => unwatch())
-    },
+      this.unwatchMap.forEach((unwatch) => unwatch())
+    }
   })
 
   dataWatcher.$watch(
@@ -66,7 +62,7 @@ export const trackerForVueData = (
       //   this.unwatchMap.set(name, unwatch)
       // })
     },
-    { deep: true },
+    { deep: true }
   )
   ;(window as any).dataWatcher = dataWatcher
   // return dataWatcher

@@ -1,22 +1,12 @@
-import {
-  TrackerParamsUnion,
-  patches,
-  isUndefined,
-  isFunction,
-  isString,
-} from './base'
+import { TrackerParamsUnion, patches, isUndefined, isFunction, isString } from './base'
 
 import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
 import { trackerForAntdvForm } from './tracker-for-antdv-form'
 
-type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] &
-  ConstructorParameters<typeof SOJTracker>[number]
+type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] & ConstructorParameters<typeof SOJTracker>[number]
 
-type AspectFunction<T extends (args?, result?) => any> = (
-  args: Parameters<T>,
-  result: ReturnType<T>,
-) => TrackerParamsUnion
+type AspectFunction<T extends (args?, result?) => any> = (args: Parameters<T>, result: ReturnType<T>) => TrackerParamsUnion
 
 type TrackerParams = string | TrackerParamsUnion
 
@@ -43,11 +33,7 @@ export class Tracker {
   }
 
   static track(params: TrackerParams | AspectFunction<any>) {
-    return function (
-      target,
-      propertyKey: string,
-      descriptor: PropertyDescriptor,
-    ) {
+    return function (target, propertyKey: string, descriptor: PropertyDescriptor) {
       /** 是构造函数, 装饰在类上 */
       // target === target.prototype.constructor &&
 
@@ -81,22 +67,16 @@ export class Tracker {
 /**
  * 返回一个目标"类方法"的 descriptor
  */
-function TrackClassMethod(
-  params: TrackerParams | AspectFunction<any>,
-  descriptor: PropertyDescriptor,
-) {
+function TrackClassMethod(params: TrackerParams | AspectFunction<any>, descriptor: PropertyDescriptor) {
   const originalValue = descriptor.value
 
   descriptor.value = function (...args) {
     const result = originalValue.apply(this, args)
 
-    const tracking = async originalValueResult => {
+    const tracking = async (originalValueResult) => {
       /** 方法的话就把原函数的 入参和返回值 传进去 */
       if (isFunction(params)) {
-        const AspectFunctionResult = await params.apply(this, [
-          args,
-          originalValueResult,
-        ])
+        const AspectFunctionResult = await params.apply(this, [args, originalValueResult])
         Tracker.send(AspectFunctionResult)
       } else {
         Tracker.send(params)
@@ -125,14 +105,9 @@ function TrackClass(params: any) {
   // }
 }
 
-function getChangeHandler(
-  fieldsMapping: Record<string, string | number>,
-  onValuesChange?: (name, action, event) => TrackerParamsUnion,
-) {
+function getChangeHandler(fieldsMapping: Record<string, string | number>, onValuesChange?: (name, action, event) => TrackerParamsUnion) {
   return (name, action, event) => {
-    const params = isFunction(onValuesChange)
-      ? onValuesChange(name, action, event)
-      : {}
+    const params = isFunction(onValuesChange) ? onValuesChange(name, action, event) : {}
     const Key = fieldsMapping[name]
 
     Tracker.send({ Key, name, ...params })
