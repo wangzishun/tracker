@@ -9,8 +9,6 @@
 
 # 安装
 
-> npm i @broker/tracker
-
 # 开发
 
 提供三个demo, react-tracker / vue2-tracker / vue3-tracker
@@ -28,7 +26,7 @@
 ## 使用实例
 
 ```js 一般用法
-import Tracker from '@broker/tracker'
+import Tracker from '/tracker'
 
 // 通过 new 预先缓存额外参数, 这些参数会在之后的send动作中一并发送出去
 new Tracker({ from: 'shanghai', name: 'page_wangzi' })
@@ -41,7 +39,7 @@ Tracker.send({ Key: 'uniquecode111', name: 'page_wangzi' })
 ```
 
 ```js 在 vue 或 react class 语法中的使用
-import Tracker from '@broker/tracker'
+import Tracker from 'tracker'
 
 @Component
 class VueComponent extend Vue {
@@ -80,7 +78,7 @@ class VueComponent extend Vue {
 ```js 面向 ant design vue 2.0版本
 import { Component, Vue } from ''
 import { Form } from 'ant-design-vue'
-import Tracker from '@broker/tracker'
+import Tracker from 'tracker'
 
 @Component
 class VueComponent extend Vue {
@@ -107,9 +105,6 @@ class VueComponent extend Vue {
 
 # 帮助
 
-1. https://igit.58corp.com/_bi/dw_team/blob/master/流程规范/影痕日志埋点规范.md
-2. soj 客户端仓库 https://igit.58corp.com/_fe/soj_client
 
 # 联系
 
-(王子顺)[wangzishun@58.com]
