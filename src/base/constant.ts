@@ -17,9 +17,17 @@ export const WMDAParamsEnum = <const>{
 export const SOJParamsEnum = <const>{
   Key: 'action',
   Action: 'action',
+  ActionType: 'action_type',
+  ActionName: 'action_name',
   Site: 'site',
   Plat: 'plat',
-  Type: 'type'
+  Type: 'type',
+  Page: 'page',
+  PageName: 'pageName',
+  Referer: 'referer',
+  Screen: 'screen',
+  Href: 'href',
+  CustomParam: 'customparam'
 }
 
 /** 每个工具的埋点唯一标识符所对应的 key */

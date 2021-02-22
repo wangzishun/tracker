@@ -7,14 +7,16 @@
     "skipLibCheck": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "noImplicitAny": false,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "experimentalDecorators": true
   },
   "include": ["./src"]
 }

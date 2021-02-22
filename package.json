@@ -1,24 +1,22 @@
 {
   "name": "tracker",
-  "version": "1.0.0",
-  "description": "",
+  "author": "wangzishun@58.com",
+  "version": "0.0.3",
+  "description": "tracker",
+  "repository": {
+    "type": "git",
+    "url": "git@igit.58corp.com:_fe/broker/tracker.git"
+  },
   "main": "dist/tracker.js",
   "module": "dist/tracker.esm.js",
   "types": "dist/types",
+  "files": ["src", "lib"],
   "scripts": {
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
+    "dev": "tsc --module commonjs && rollup -c rollup.config.ts -w",
     "build:minify": "terser dist/tracker.js --compress --mangle -o dist/tracker.min.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wangzishun/tracker.git"
-  },
-  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/wangzishun/tracker/issues"
-  },
-  "homepage": "https://github.com/wangzishun/tracker#readme",
   "devDependencies": {
     "@babel/core": "^7.12.17",
     "@babel/plugin-proposal-class-properties": "^7.12.13",

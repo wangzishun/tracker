@@ -1,8 +1,5 @@
 import { isUndefined } from './base'
 
-/** 表单字段在 form 对象中的路径, 我们需要依赖这个路径进行 watch */
-const WATCH_PATH = 'fieldsStore.fields'
-
 /**
  * 表单埋点, 基于 [ant design vue ^1.x] 版本的form表单埋点 [Vue version ^2.x]
  * @param formContext
