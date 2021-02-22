@@ -26,7 +26,7 @@
 ## 使用实例
 
 ```js 一般用法
-import Tracker from '/tracker'
+import Tracker from 'tracker'
 
 // 通过 new 预先缓存额外参数, 这些参数会在之后的send动作中一并发送出去
 new Tracker({ from: 'shanghai', name: 'page_wangzi' })
@@ -36,6 +36,27 @@ Tracker.send('uniquecode111')
 
 // 附加新的额外参数
 Tracker.send({ Key: 'uniquecode111', name: 'page_wangzi' })
+```
+
+```js 在 react class  语法中的使用
+import React from 'react'
+
+class VueComponent extend React.Component {
+  /*
+   * 在支持wmda的页面上发送 eventid: uniquecode111
+   * 在支持soj的页面上发送 action: uniquecode111
+   */
+  @Tracker.track('uniquecode111')
+  handleClick = ()=>{ }
+
+  /*
+   * 可以是一个方法, 该方法入参是原函数的返回值
+   * 在支持wmda的页面上发送 eventid: uniquecode111-handleClick222
+   * 在支持soj的页面上发送 action: uniquecode111-handleClick222
+   */
+  @Tracker.track(function(result){ return { Key: 'uniquecode111-handleClick222' } })
+  handleClick222(){}
+}
 ```
 
 ```js 在 vue 或 react class 语法中的使用
