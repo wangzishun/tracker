@@ -30,6 +30,10 @@ export const SOJParamsEnum = <const>{
   CustomParam: 'customparam'
 }
 
+/** soj 使用的参数 */
+export const GAParamsEnum = <const>{
+
+}
 /** 每个工具的埋点唯一标识符所对应的 key */
 export const ToolsTrackingUniqueKeys = <const>{
   Common: 'Key',
@@ -40,10 +44,12 @@ export const ToolsTrackingUniqueKeys = <const>{
 export type CommonParamsEnumKeysUnion = keyof typeof CommonParamsEnum
 export type WMDAParamsEnumKeysUnion = keyof typeof WMDAParamsEnum
 export type SOJParamsEnumKeysUnion = keyof typeof SOJParamsEnum
+export type GAParamsEnumKeysUnion = keyof typeof GAParamsEnum
 
 export const CommonParamsEnumKeys = Object.keys(CommonParamsEnum) as CommonParamsEnumKeysUnion[]
 export const WMDAParamsEnumKeys = Object.keys(WMDAParamsEnum) as WMDAParamsEnumKeysUnion[]
 export const SOJParamsEnumKeys = Object.keys(SOJParamsEnum) as SOJParamsEnumKeysUnion[]
+export const GAParamsEnumKeys = Object.keys(GAParamsEnum) as GAParamsEnumKeysUnion[]
 
-type UniqueKeyUnion = CommonParamsEnumKeysUnion | WMDAParamsEnumKeysUnion | SOJParamsEnumKeysUnion
+type UniqueKeyUnion = CommonParamsEnumKeysUnion | WMDAParamsEnumKeysUnion | SOJParamsEnumKeysUnion | GAParamsEnumKeysUnion
 export type TrackerParamsUnion = Partial<Record<UniqueKeyUnion, any>> & Record<string, any>

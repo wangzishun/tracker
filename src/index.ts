@@ -2,6 +2,7 @@ import { TrackerParamsUnion, patches, isUndefined, isFunction, isString } from '
 
 import { SOJTracker } from './soj-tracker'
 import { WMDATracker } from './wmda-tracker'
+import { GATracker } from './ga-tracker'
 import { trackerForAntdvForm } from './tracker-for-antdv-form'
 
 type TrackerProps = ConstructorParameters<typeof WMDATracker>[number] & ConstructorParameters<typeof SOJTracker>[number]
@@ -14,8 +15,8 @@ type FieldsMapping = Record<string, TrackerParams>
 
 export class Tracker {
   private static WMDATracker: WMDATracker
-
   private static SOJTracker: SOJTracker
+  private static GATracker: GATracker
 
   /**
    * @param params 发码参数
@@ -24,13 +25,14 @@ export class Tracker {
    */
   static async send(params: TrackerParams = {}) {
     /** 这里把参数变成对象 */
-    const refactoredParams = isString(params) ? { key: params } : params
+    const refactoredParams = isString(params) ? { Key: params } : params
     const data = await patches(refactoredParams)
 
     new Tracker()
 
     Tracker.WMDATracker && Tracker.WMDATracker.send(data)
     Tracker.SOJTracker && Tracker.SOJTracker.send(data)
+    Tracker.GATracker && Tracker.GATracker.send(data)
   }
 
   /**
@@ -42,13 +44,15 @@ export class Tracker {
         throw new Error('暂不支持参数埋点')
       } else if (isUndefined(name) && isUndefined(descriptor)) {
         throw new Error('暂不支持装饰class')
-      } else if (isUndefined(descriptor) && name) {
-        // 装饰属性
-        TrackClassProperty.apply(this, [params, target, name])
-      } else if (descriptor) {
+      }
+
+      if ('value' in descriptor) {
         // 装饰方法
         return TrackClassMethod.apply(this, [params, descriptor])
       }
+
+      // 装饰属性
+      return TrackClassProperty(params, target, name, descriptor)
     }
   }
 
@@ -67,6 +71,10 @@ export class Tracker {
 
     if (isUndefined(Tracker.SOJTracker) || Tracker.SOJTracker.isPrepare()) {
       Tracker.SOJTracker = new SOJTracker(trackerProps)
+    }
+
+    if (isUndefined(Tracker.GATracker) || Tracker.GATracker.isPrepare()) {
+      Tracker.GATracker = new GATracker(trackerProps)
     }
   }
 }
@@ -102,7 +110,37 @@ function TrackClassMethod(params: TrackerParams | AspectFunction<any>, descripto
   return descriptor
 }
 
-function TrackClassProperty(params: TrackerParams | AspectFunction<any>, target, name) {
+function TrackClassProperty(params: TrackerParams | AspectFunction<any>, target, name, descriptor?) {
+  if ('initializer' in descriptor) {
+    const originalinItializer = descriptor.initializer
+    descriptor.initializer = function () {
+      const self = this
+      const originalinValue = originalinItializer.call(self)
+      return (...args) => {
+        const result = originalinValue.apply(self, args)
+
+        const tracking = async (originalValueResult) => {
+          /** 方法的话就把原函数的 入参和返回值 传进去 */
+          if (isFunction(params)) {
+            const AspectFunctionResult = await params.apply(self, [args, originalValueResult])
+            Tracker.send(AspectFunctionResult)
+          } else {
+            Tracker.send(params)
+          }
+        }
+
+        /** 结果有可能是异步, 异步的时候注册到回调函数上 */
+        if (result && result.then) {
+          result.then(tracking)
+        } else {
+          tracking(result)
+        }
+
+        return result
+      }
+    }
+    return descriptor
+  }
   let value = target[name]
 
   const setter = (newProperty) => {
@@ -111,8 +149,6 @@ function TrackClassProperty(params: TrackerParams | AspectFunction<any>, target,
         const tracking = async (originalValueResult) => {
           /** 方法的话就把原函数的 入参和返回值 传进去 */
           if (isFunction(params)) {
-            console.log(params);
-
             const AspectFunctionResult = await params.apply(newProperty, [paramsRest, originalValueResult])
             Tracker.send(AspectFunctionResult)
           } else {
@@ -160,7 +196,7 @@ function TrackClass(params: any) {
 function getChangeHandler(fieldsMapping: FieldsMapping, onValuesChange?: (name, action, event) => TrackerParamsUnion) {
   return (name, action, event) => {
     let paramsFromMapping = fieldsMapping[name]
-    paramsFromMapping = isString(paramsFromMapping) ? { Key: paramsFromMapping } : paramsFromMapping
+    paramsFromMapping = typeof paramsFromMapping === 'object' ? paramsFromMapping : { Key: paramsFromMapping }
 
     const params = isFunction(onValuesChange) ? onValuesChange(name, action, event) : {}
 
@@ -189,6 +225,7 @@ declare global {
     loggerAction?: any
     WMDA_SDK_CONFIG?: any
     WMDA_REPORT?: any
+    dataLayer?: any
     Tracker?: Tracker
   }
 }
